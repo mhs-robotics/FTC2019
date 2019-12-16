@@ -118,6 +118,15 @@ public class AutonomousOpMode extends LinearOpMode
         feed(0);
     }
 
+    void forwardBackAlinement(int theta, int distY){
+        forwardBackward((float)(Math.abs(distY/(Math.sin(Math.toRadians(angle))))));
+        if(theta>0){
+             rotate((float)(90-theta));
+        }else{
+             rotate((float)(180-theta));
+        }
+    }
+
     void feed(double power){
         spinRight.setPower(power);
         spinLeft.setPower(power);
