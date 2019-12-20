@@ -32,43 +32,48 @@ public class TestBotCode1 extends LinearOpMode {
         tgtPower = gamepad1.right_stick_y;
         left_drive.setPower(tgtPower);
         telemetry.update();
-        telemetry.addData("Target Power", tgtPower);
-        telemetry.addData("Motor Power", left_drive.getPower());
+      //  telemetry.addData("Target Power", tgtPower);
+      //  telemetry.addData("Motor Power", left_drive.getPower());
         // RIGHT MOTOR FORWARD
         tgtPower = -gamepad1.right_stick_y;
         right_drive.setPower(tgtPower);
         telemetry.update();
-        telemetry.addData("Target Power", tgtPower);
-        telemetry.addData("Motor Power", right_drive.getPower());
+      //  telemetry.addData("Target Power", tgtPower);
+      //  telemetry.addData("Motor Power", right_drive.getPower());
         // LEFT TURN
         tgtPower = gamepad1.right_stick_x;
         left_drive.setPower(tgtPower);
         telemetry.update();
-        telemetry.addData("Target Power", tgtPower);
-        telemetry.addData("Motor Power", right_drive.getPower());
+       // telemetry.addData("Target Power", tgtPower);
+      //  telemetry.addData("Motor Power", right_drive.getPower());
         // RIGHT TURN
         tgtPower = gamepad1.right_stick_x;
         right_drive.setPower(tgtPower);
         telemetry.update();
-        telemetry.addData("Target Power", tgtPower);
-        telemetry.addData("Motor Power", left_drive.getPower());
+       // telemetry.addData("Target Power", tgtPower);
+       // telemetry.addData("Motor Power", left_drive.getPower());
+        
         // SERVO
         
         //tgtPower = -gamepad1.left_stick_y;
         //servo1.setPosition(tgtPower);
-        boolean left_bumper= gamepad1.left_bumper;
         //tgtPosition = -gamepad1.left_bumper;
-        if(left_bumper){
-         servo1.setPosition(30);
-        }
-        else if(left_bumper == false){
-          servo1.setPosition(0);
-        }
         //tgtPosition = tgtPosition + 1;
         //tgtPosition = tgtPosition / 2;
        // servo1.setPosition(tgtPosition);
         //servo1.setPosition(30);
       //  telemetry.addData("Target Position", tgtPosition);
+
+         boolean left_bumper= gamepad1.left_bumper;
+         if(left_bumper){
+         servo1.setPosition(.6);
+        }
+
+        boolean right_bumper= gamepad1.right_bumper;
+        if(right_bumper){
+         servo1.setPosition(.8);
+        }
+        
         telemetry.addData("Servo Position", servo1.getPosition());
         telemetry.update();
        
@@ -76,4 +81,4 @@ public class TestBotCode1 extends LinearOpMode {
     }
   }
 }
-  
+
