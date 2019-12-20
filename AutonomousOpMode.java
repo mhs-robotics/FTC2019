@@ -41,19 +41,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
 @Autonomous(name="Basic: Iterative OpMode", group="Iterative Opmode")
 public class AutonomousOpMode extends LinearOpMode
@@ -88,11 +75,11 @@ public class AutonomousOpMode extends LinearOpMode
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         spinRight =hardwareMap.get(DcMotor.class, "spin_right");
         spinLeft =hardwareMap.get(DcMotor.class, "spin_left");
-        spool = hardwareMap.get(Servo.class, "spool");
         spinLeft=hardwareMap.get(DcMotor.class, "spin_left");
         spinLeft=hardwareMap.get(DcMotor.class, "spin_right");
-
-
+        spool = hardwareMap.get(Servo.class, "spool");
+        foundationGrabber=hardwareMap.get(Servo.class, "foundationGrabber");
+        
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftRear.setDirection(DcMotor.Direction.FORWARD);
@@ -121,8 +108,19 @@ public class AutonomousOpMode extends LinearOpMode
         feed(1);
         forwardBackward((float)(Math.sqrt((targetYPos-yPos)*(targetYPos-yPos)+xNotMoved*xNotMoved)));
         feed(0);
+        /*it backs up at the same angle it came in as to cause minimal disruption to the other blocks*/
+        forwardBackAlinement(angle,20);
+        /*now it goes forward until it gets to the platform then it strafes so it can drop off the block*/
+        forwardBack((float)((6-blockNum)*8+48);
+        strafe(-20);
+        /*at this point, the block is released*/
+        feed(-1);
+        sleep(1);
+        feed(0);
+        
     }
-
+   
+    /*this function backs up the robot a certain Y distance in inches then turns the robot to be parallel to the wall.*/
     void forwardBackAlinement(int theta, int distY){
         forwardBackward((float)(Math.abs(distY/(Math.sin(Math.toRadians(angle))))));
         if(theta>0){
@@ -136,10 +134,21 @@ public class AutonomousOpMode extends LinearOpMode
         spinRight.setPower(power);
         spinLeft.setPower(power);
     }
-    /*we can not push the platform as the other one will be in the way so I am assuming we
-    will put a servo, however, I do not know where this mechanism will be. Because I do not know the orientation, this function is intentionally left blank.*/
-    void grabPlatform(int x, int y, int orientation){
-
+    /*The platform grabber is on the back of the robot. So, if we hook onto the platform then rotate,
+      the robot could be facing the cking line and have positioned the building zone in the right place.
+      Note:this function assumes that the robot has already grabbed the platform. The only parremeter is 
+      at what X the robot parcs.
+    */
+    void movePlatform(float endX){
+        /*it is hard to predict what effect carrying the platform has on the robots movements so
+        these numbers are the least acurate*/
+        float outDist=10;
+        forwardBackward(outDist*(/*a scale factor to compensate for the drag/extra mass of the platform*/));
+        turn(90);
+        //releases the platform
+        grabServo.setPosition(0);
+        strafe((50-outDist)-endX);
+        forwardBackward(30);       
     }
     void forwardBackward(float inches){
 
