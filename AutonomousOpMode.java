@@ -50,7 +50,7 @@ public class AutonomousOpMode extends LinearOpMode
     final static float rotationsPerInchForwardBackward=0;
     final static float rotationsPerInchStrafing=0;
     final static float rotationsPerDegreeRightLeft=0;
-    final static float maxPower=0;
+    final static float maxPower=1;
     private DcMotor leftRear;
     private DcMotor leftFront;
     private DcMotor rightRear;
