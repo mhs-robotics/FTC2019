@@ -8,7 +8,8 @@ package org.firstinspires.ftc.teamcode;
 /* Copyright (c) 2019 FIRST. All rights reserved.
 
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
+ * are permitted (subject to 
+ imitations in the disclaimer below) provided that
  * the following conditions are met:
  *
  * Redistributions of source code must retain the above copyright notice, this list
@@ -119,12 +120,12 @@ public class AutonomousOpMode extends LinearOpMode
   }
   
   /*this function backs up the robot a certain Y distance in inches then turns the robot to be parallel to the wall.*/
-  void forwardBackAlinement(int theta, int distY){
+  void forwardBackAlignment(int theta, int distY){
     forwardBackward((float)(Math.abs(distY / (Math.sin(Math.toRadians(angle))))));
     if(theta > 0){
-       rotate((float)(90 - theta));
+       turn((float)(90 - theta));
     }else{
-       rotate((float)(180 - theta));
+       turn((float)(180 - theta));
     }
   }
 
@@ -133,13 +134,13 @@ public class AutonomousOpMode extends LinearOpMode
     spinLeft.setPower(power);
   }
   /*The platform grabber is on the back of the robot. So, if we hook onto the platform then rotate,
-   the robot could be facing the cking line and have positioned the building zone in the right place.
+   the robot could be facing the parking line and have positioned the building zone in the right place.
    Note:this function assumes that the robot has already grabbed the platform. The only parremeter is 
-   at what X the robot parcs.
+   at what X the robot parks.
   */
   void movePlatform(float endX){
     /*it is hard to predict what effect carrying the platform has on the robots movements so
-    these numbers are the least acurate*/
+    these numbers are the least accurate*/
     float outDist = 10;
     forwardBackward(outDist * (/*a scale factor to compensate for the drag/extra mass of the platform*/));
     turn(90);
