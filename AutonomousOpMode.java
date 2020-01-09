@@ -57,13 +57,8 @@ public class AutonomousOpMode extends LinearOpMode
     private DcMotor leftFront;
     private DcMotor rightRear;
     private DcMotor rightFront;
-    //private DcMotor spinRight;
-    //private DcMotor spinLeft;
-    //private DcMotor horizontalSlide;
-    //private DcMotor spool;
-    //private Servo grabServo;
-    //private Servo rotateServo;
-    //private Servo grabPlatform;
+    private DcMotor spinRight;
+    private DcMotor spinLeft;
 
 
     @Override
@@ -77,24 +72,14 @@ public class AutonomousOpMode extends LinearOpMode
         leftFront = hardwareMap.get(DcMotor.class, "left_front");
         rightRear = hardwareMap.get(DcMotor.class, "right_rear");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
+
+        spinLeft = hardwareMap.get(DcMotor.class, "spin_left");
+        spinRight = hardwareMap.get(DcMotor.class, "spin_right");
+
         rightFront.setTargetPosition(0);
         leftFront.setTargetPosition(0);
         rightRear.setTargetPosition(0);
         leftRear.setTargetPosition(0);
-        
-        
-        
-        
-      // spinRight = hardwareMap.get(DcMotor.class, "spin_right");
-        //spinLeft = hardwareMap.get(DcMotor.class, "spin_left");
-
-       // grabServo = hardwareMap.get(Servo.class, "grab_servo");
-        //rotateServo = hardwareMap.get(Servo.class, "rotate_servo");
-
-     //   grabPlatform=  hardwareMap.get(Servo.class, "grab_platform");
-
-       // spool = hardwareMap.get(DcMotor.class, "spool_motor");
-        //horizontalSlide = hardwareMap.get(DcMotor.class, "horizontal_slide");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -106,50 +91,149 @@ public class AutonomousOpMode extends LinearOpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        forwardBackward((float)500);
-        
+        strafe(20);
 
     }
-    
+    void redNoViewForia(){
+        //ram the robot into the blocks
+        strafe(35);
 
-    /*feeds in a block but keeps the spinning motors running*/
-    void feedIn(double power){
-       // rotateServo.setPosition(/*the value that allows the robot to intake*/);
-        //grabServo.setPosition(/*the value that allows the robot to intake*/);
+        //move the robot into the block while using the spin motors
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        forwardBackward(-7);
+        spinLeft.setPower(0);
+        spinRight.setPower(0);
 
-        //spinRight.setPower(power);
-        //spinLeft.setPower(power);
+        //move the robot out
+        strafe(-17);
 
-        //grabServo.setPosition(/*the value that locks the block*/);
+        //takes the robot across the line and to the place were the blocks can be deposited
+        forwardBackward(50);
+
+        //release block while turning
+        turn(180);
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        sleep(5000);
+        spinRight.setPower(0);
+        spinLeft.setPower(0);
+        turn(180);
+
+        //go back for the next block (keep in mind each block is 8 inches)
+        forwardBackward(-50);
+
+        //ram the robot into the blocks
+        strafe(17);
+
+
+        //move the robot into the block while using the spin motors
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        forwardBackward(-7);
+        spinLeft.setPower(0);
+        spinRight.setPower(0);
+
+        //move the robot out
+        strafe(-17);
+
+        //move robot om the line
+        forwardBackward(50);
+
+        //spin the robot while releasing the block while on the line
+        turn(180);
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        sleep(5000);
+        spinRight.setPower(0);
+        spinLeft.setPower(0);
+        turn(180);
+
 
     }
-    /*releases block but does not retract slide or spool*/
-    /*void releaseBlock(double powerSlide, double powerSpool, int slideDegrees, int spoolDegrees){
+    void blueNoViewForia(){
+        //ram the robot into the blocks
+        strafe(-35);
 
-        spool.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        spool.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        spool.setTargetPosition(spoolDegrees);
+        //move the robot into the block while using the spin motors
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        forwardBackward(-7);
+        spinLeft.setPower(0);
+        spinRight.setPower(0);
 
-        horizontalSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        horizontalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        horizontalSlide.setTargetPosition(slideDegrees);
+        //move the robot out
+        strafe(+17);
 
-        horizontalSlide.setPower(powerSlide);
-        spool.setPower(powerSpool);
+        //takes the robot across the line and to the place were the blocks can be deposited
+        forwardBackward(50);
 
-        while(spool.isBusy()||horizontalSlide.isBusy()){
-            if(!spool.isBusy()){
-                spool.setPower(0);
-            }
-            if(!horizontalSlide.isBusy()){
-                horizontalSlide.setPower(0);
-            }
-        }
-        spool.setPower(0);
-        horizontalSlide.setPower(0);
-    }*/
+        //release block while turning
+        turn(180);
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        sleep(5000);
+        spinRight.setPower(0);
+        spinLeft.setPower(0);
+        turn(180);
+
+        //go back for the next block (keep in mind each block is 8 inches)
+        forwardBackward(-50);
+
+        //ram the robot into the blocks
+        strafe(-17);
+
+
+        //move the robot into the block while using the spin motors
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        forwardBackward(-7);
+        spinLeft.setPower(0);
+        spinRight.setPower(0);
+
+        //move the robot out
+        strafe(17);
+
+        //move robot om the line
+        forwardBackward(50);
+
+        //spin the robot while releasing the block while on the line
+        turn(180);
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        sleep(5000);
+        spinRight.setPower(0);
+        spinLeft.setPower(0);
+        turn(180);
+
+
+    }
    
-    
+    void getBlock(int xDist,int yDist){
+        /*this code block ensures that if the robot is not in front of the blocks, it moves forward
+         ^until it is
+         */
+        if(xDist>0) {
+            forwardBackward(xDist+8+18);
+
+        }else{
+            forwardBackward(xDist);
+        }
+        strafe(yDist);
+        /*moves the robot to pick up the block while turning on both block grabber motors then
+        * stops the grabber motors after successfully picking up the blocks*/
+        spinLeft.setPower(1);
+        spinRight.setPower(1);
+        forwardBackward(-9);
+        spinLeft.setPower(0);
+        spinRight.setPower(0);
+
+    }
+
+
+
+
+
     void forwardBackward(float inches){
         maxPower=1;
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -170,7 +254,7 @@ public class AutonomousOpMode extends LinearOpMode
 
         allOn();
         while(leftFront.isBusy() ||rightFront.isBusy()||leftRear.isBusy()||rightRear.isBusy()&& opModeIsActive()) {
-        
+
             if(!leftFront.isBusy())
                 leftFront.setPower(0);
             if(!rightFront.isBusy())
@@ -179,12 +263,12 @@ public class AutonomousOpMode extends LinearOpMode
                 leftRear.setPower(0);
             if(!rightRear.isBusy())
                 rightRear.setPower(0);
-                
+
         }
         allOff();
     }
     void turn(float degrees){
-        maxPower=.605;
+        maxPower=(float).605;
         leftFront.setTargetPosition((int)(degrees * rotationsPerDegreeRightLeft));
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -216,7 +300,7 @@ public class AutonomousOpMode extends LinearOpMode
         allOff();
     }
     void strafe(float inches){
-        maxPower=.605;
+        maxPower=(float).605;
         leftFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
