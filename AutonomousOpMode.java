@@ -96,7 +96,7 @@ public class AutonomousOpMode extends LinearOpMode
     }
     void redNoViewForia(){
         //ram the robot into the blocks
-        strafe(35);
+        strafe(40);
 
         //move the robot into the block while using the spin motors
         spinLeft.setPower(1);
@@ -153,7 +153,7 @@ public class AutonomousOpMode extends LinearOpMode
     }
     void blueNoViewForia(){
         //ram the robot into the blocks
-        strafe(-35);
+        strafe(-40);
 
         //move the robot into the block while using the spin motors
         spinLeft.setPower(1);
@@ -194,7 +194,7 @@ public class AutonomousOpMode extends LinearOpMode
         //move the robot out
         strafe(17);
 
-        //move robot om the line
+        //move robot on the line
         forwardBackward(50);
 
         //spin the robot while releasing the block while on the line
@@ -208,7 +208,10 @@ public class AutonomousOpMode extends LinearOpMode
 
 
     }
-   
+    void blueViewForia(){
+    }
+    void redViewForia(){
+    }
     void getBlock(int xDist,int yDist){
         /*this code block ensures that if the robot is not in front of the blocks, it moves forward
          ^until it is
