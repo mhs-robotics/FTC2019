@@ -65,8 +65,14 @@ public class TeleOp2019 extends OpMode {
     private DcMotor horizontalSlide = null;
     private Servo grabServo = null;
     private Servo rotateServo = null;
-    
-    private int servoState = 0;
+    private Servo elementServo = null;
+    private double maxClip, minClip;
+    private double rotatePower = 0;
+    private int spoolPosition = 0;
+    private double grabPosition = 1;
+    private int elementState = 0;
+    private int slowMode = 3;
+    private double precisionRatio = 0;
 
 
     /*
@@ -75,7 +81,7 @@ public class TeleOp2019 extends OpMode {
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-
+        
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
@@ -93,6 +99,8 @@ public class TeleOp2019 extends OpMode {
 
         grabServo = hardwareMap.get(Servo.class, "grab_servo");
         rotateServo = hardwareMap.get(Servo.class, "rotate_servo");
+        
+        elementServo = hardwareMap.get(Servo.class, "element_servo");
 
 
 
@@ -111,11 +119,17 @@ public class TeleOp2019 extends OpMode {
         horizontalSlide.setDirection(DcMotor.Direction.FORWARD);
 
         spool.setDirection(DcMotor.Direction.FORWARD);
+        spool.setTargetPosition(0);
+
+        spool.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        spool.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
-        
+        rotateServo.setPosition(rotatePower);
+        elementServo.setPosition(0.25);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+        
     }
 
     /*
@@ -129,7 +143,13 @@ public class TeleOp2019 extends OpMode {
      */
     @Override
     public void start() {
+        
         runtime.reset();
+        //spool.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /*
@@ -138,38 +158,91 @@ public class TeleOp2019 extends OpMode {
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
+        if(gamepad1.y){
+            while(gamepad1.y){
+            }
+            slowMode += 2;
+        }
+        
+        precisionRatio = (slowMode % 3) + 1;
         
         double lsx = gamepad1.left_stick_x;
         double lsy = gamepad1.left_stick_y;
         double rsx = gamepad1.right_stick_x;
         double rsy = gamepad1.right_stick_y;
         
-        double spinnyThing = -gamepad1.left_trigger + gamepad1.right_trigger;
+        double feedPower = -gamepad1.left_trigger + gamepad1.right_trigger;
 
-        leftRear.setPower(Range.clip(lsy + lsx - rsx, -1, 1));
-        leftFront.setPower(Range.clip(lsy - lsx - rsx, -1, 1));
-        rightRear.setPower(Range.clip(lsy - lsx + rsx, -1, 1));
-        rightFront.setPower(Range.clip(lsy + lsx + rsx, -1, 1));
+        if(lsx > 0.8 || lsx < -0.8){
+          minClip = -0.605;
+          maxClip = 0.605;
+        }else{
+          minClip = -1;
+          maxClip = 1;
+        }
+        
+        leftRear.setPower(Range.clip(lsy + lsx - rsx, minClip, maxClip)/precisionRatio);
+        leftFront.setPower(Range.clip(lsy - lsx - rsx, minClip, maxClip)/precisionRatio);
+        rightRear.setPower(Range.clip(lsy - lsx + rsx, -1, 1)/precisionRatio);
+        rightFront.setPower(Range.clip(lsy + lsx + rsx, minClip, maxClip)/precisionRatio);
 
-        spinLeft.setPower(spinnyThing);
-        spinRight.setPower(-spinnyThing);
-
-        spool.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
+        spinLeft.setPower(feedPower/precisionRatio);
+        spinRight.setPower(-feedPower/precisionRatio);
+        
+        spoolPosition += ((gamepad2.right_trigger - gamepad2.left_trigger)*25)/precisionRatio;
+        
+        if(spoolPosition < 0){
+            spoolPosition = 0;
+        }else if(spoolPosition > 8900){
+            spoolPosition = 8900;
+        }
+        
+        spool.setTargetPosition(spoolPosition);
+        spool.setPower(1);
+        //spool.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
+        
         
         if (gamepad2.right_bumper){
-            servoState = 1;
+            while(gamepad2.right_bumper){
+            }
+            grabPosition++;
         }
-        if (gamepad2.left_bumper){
-            servoState = 0;
+        switch(grabPosition % 2){
+            case 1:
+                grabServo.setPosition(1);
+            case 0:
+                grabServo.setPosition(0.583);
         }
         
-        grabServo.setPosition(0.375*servoState);
+        grabServo.setPosition(grabPosition);
         
-        horizontalSlide.setPower(gamepad2.left_stick_y);
+        horizontalSlide.setPower((gamepad2.left_stick_y));
         
-        rotateServo.setPosition((gamepad2.right_stick_x + 1) / 2);
+        rotateServo.setPosition(rotatePower);
+        if(gamepad2.a){
+            while(gamepad2.a){
+            }
+            rotatePower++;
+        }
         
+        switch(rotatePower % 2){
+            case 0:
+                rotateServo.setPosition(1);
+            case 1:
+                rotateServo.setPosition(0.001);
+        }
         
+        if(gamepad2.b){
+            while(gamepad2.b){
+            }
+            elementState++;
+        }
+        
+        if(elementState % 2 == 1){
+            elementServo.setPosition(0.67);
+        }else{
+            elementServo.setPosition(0.25);
+        }
         
         /*
         * Code so that left stick goes forward backward and strafes
@@ -177,7 +250,7 @@ public class TeleOp2019 extends OpMode {
         */
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Status", "Run Time: " + runtime.toString() + " Lift: " + spool.getCurrentPosition());
     }
 
     /*
@@ -186,5 +259,4 @@ public class TeleOp2019 extends OpMode {
     @Override
     public void stop() {
     }
-
 }
