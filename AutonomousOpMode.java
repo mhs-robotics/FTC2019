@@ -57,8 +57,13 @@ public class AutonomousOpMode extends LinearOpMode
     private DcMotor leftFront;
     private DcMotor rightRear;
     private DcMotor rightFront;
-    private DcMotor spinRight;
-    private DcMotor spinLeft;
+    //private DcMotor spinRight;
+    //private DcMotor spinLeft;
+    //private DcMotor horizontalSlide;
+    //private DcMotor spool;
+    //private Servo grabServo;
+    //private Servo rotateServo;
+    //private Servo grabPlatform;
 
 
     @Override
@@ -72,15 +77,11 @@ public class AutonomousOpMode extends LinearOpMode
         leftFront = hardwareMap.get(DcMotor.class, "left_front");
         rightRear = hardwareMap.get(DcMotor.class, "right_rear");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
-
-        spinLeft = hardwareMap.get(DcMotor.class, "spin_left");
-        spinRight = hardwareMap.get(DcMotor.class, "spin_right");
-
         rightFront.setTargetPosition(0);
         leftFront.setTargetPosition(0);
         rightRear.setTargetPosition(0);
         leftRear.setTargetPosition(0);
-
+        
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftRear.setDirection(DcMotor.Direction.REVERSE);
@@ -88,250 +89,131 @@ public class AutonomousOpMode extends LinearOpMode
         rightRear.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
 
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        strafe(20);
+        turn(true,(float)3);
+        
 
     }
-    void redNoViewForia(){
-        //ram the robot into the blocks
-        strafe(40);
-
-        //move the robot into the block while using the spin motors
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        forwardBackward(-7);
-        spinLeft.setPower(0);
-        spinRight.setPower(0);
-
-        //move the robot out
-        strafe(-17);
-
-        //takes the robot across the line and to the place were the blocks can be deposited
-        forwardBackward(50);
-
-        //release block while turning
-        turn(180);
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        sleep(5000);
-        spinRight.setPower(0);
-        spinLeft.setPower(0);
-        turn(180);
-
-        //go back for the next block (keep in mind each block is 8 inches)
-        forwardBackward(-50);
-
-        //ram the robot into the blocks
-        strafe(17);
-
-
-        //move the robot into the block while using the spin motors
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        forwardBackward(-7);
-        spinLeft.setPower(0);
-        spinRight.setPower(0);
-
-        //move the robot out
-        strafe(-17);
-
-        //move robot om the line
-        forwardBackward(50);
-
-        //spin the robot while releasing the block while on the line
-        turn(180);
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        sleep(5000);
-        spinRight.setPower(0);
-        spinLeft.setPower(0);
-        turn(180);
-
-
-    }
-    void blueNoViewForia(){
-        //ram the robot into the blocks
-        strafe(-40);
-
-        //move the robot into the block while using the spin motors
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        forwardBackward(-7);
-        spinLeft.setPower(0);
-        spinRight.setPower(0);
-
-        //move the robot out
-        strafe(+17);
-
-        //takes the robot across the line and to the place were the blocks can be deposited
-        forwardBackward(50);
-
-        //release block while turning
-        turn(180);
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        sleep(5000);
-        spinRight.setPower(0);
-        spinLeft.setPower(0);
-        turn(180);
-
-        //go back for the next block (keep in mind each block is 8 inches)
-        forwardBackward(-50);
-
-        //ram the robot into the blocks
-        strafe(-17);
-
-
-        //move the robot into the block while using the spin motors
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        forwardBackward(-7);
-        spinLeft.setPower(0);
-        spinRight.setPower(0);
-
-        //move the robot out
-        strafe(17);
-
-        //move robot on the line
-        forwardBackward(50);
-
-        //spin the robot while releasing the block while on the line
-        turn(180);
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        sleep(5000);
-        spinRight.setPower(0);
-        spinLeft.setPower(0);
-        turn(180);
-
-
-    }
-    void blueViewForia(){
-    }
-    void redViewForia(){
-    }
-    void getBlock(int xDist,int yDist){
-        /*this code block ensures that if the robot is not in front of the blocks, it moves forward
-         ^until it is
-         */
-        if(xDist>0) {
-            forwardBackward(xDist+8+18);
-
-        }else{
-            forwardBackward(xDist);
-        }
-        strafe(yDist);
-        /*moves the robot to pick up the block while turning on both block grabber motors then
-        * stops the grabber motors after successfully picking up the blocks*/
-        spinLeft.setPower(1);
-        spinRight.setPower(1);
-        forwardBackward(-9);
-        spinLeft.setPower(0);
-        spinRight.setPower(0);
-
-    }
-
-
-
-
-
+    
+    
     void forwardBackward(float inches){
-        maxPower=1;
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
+        leftFront.setTargetPosition((int)(500000 * rotatePerInchForwardBackward) + 900000);
 
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
+        leftRear.setTargetPosition((int)(500000 * rotatePerInchForwardBackward));
 
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
+        rightFront.setTargetPosition((int)(500000 * rotatePerInchForwardBackward));
 
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
+        rightRear.setTargetPosition((int)(500000 * rotatePerInchForwardBackward));
+
+        allOnForwardBack();
+        while((leftFront.isBusy() ||rightFront.isBusy()||leftRear.isBusy()||rightRear.isBusy())&& opModeIsActive()) {
+            telemetry.addData("lf",leftFront.getCurrentPosition());
+            if(leftFront.getCurrentPosition()>inches){
+                break;
+            }
+            
+        }
+        allOff();
+    }
+    void turn(boolean right, float degrees){
+        
+
+        if(right){
+            
+         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward) - 900000);
+
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward));
+
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setTargetPosition((int)(degrees * rotatePerInchForwardBackward));
+
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setTargetPosition((int)(degrees * rotatePerInchForwardBackward));
+
+            allOnRight();
+        }else{
+             leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setTargetPosition((int)(degrees * rotatePerInchForwardBackward) - 900000);
+
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setTargetPosition((int)(degrees * rotatePerInchForwardBackward));
+
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward));
+
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward));
+
+            allOnLeft();
+        }
+        while(leftFront.isBusy()) {
+            if(right){
+            if(rightFront.getCurrentPosition()>degrees){
+                break;
+            }
+            }else{
+            
+            }
+        }
+        allOff();
+    }
+    
+    
+    void strafe(float inches){
+        maxPower= (float)0.605;
+        leftFront.setTargetPosition((int)(500000 * rotatePerInchStrafing));
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftRear.setTargetPosition((int)(-500000 * rotatePerInchStrafing));
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightFront.setTargetPosition((int)(500000 * rotatePerInchStrafing));
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightFront.setTargetPosition((int)(500000 * rotatePerInchStrafing));
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         allOn();
         while(leftFront.isBusy() ||rightFront.isBusy()||leftRear.isBusy()||rightRear.isBusy()&& opModeIsActive()) {
-
-            if(!leftFront.isBusy())
-                leftFront.setPower(0);
-            if(!rightFront.isBusy())
-                rightFront.setPower(0);
-            if(!leftRear.isBusy())
-                leftRear.setPower(0);
-            if(!rightRear.isBusy())
-                rightRear.setPower(0);
-
         }
         allOff();
     }
-    void turn(float degrees){
-        maxPower=(float).605;
-        leftFront.setTargetPosition((int)(degrees * rotationsPerDegreeRightLeft));
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftRear.setTargetPosition((int)(degrees * rotationsPerDegreeRightLeft));
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-        rightFront.setTargetPosition((int)(-degrees * rotationsPerDegreeRightLeft));
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        rightRear.setTargetPosition((int)(-degrees * rotationsPerDegreeRightLeft));
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        allOn();
-        while(leftFront.isBusy() && opModeIsActive()) {
-            if(!leftFront.isBusy())
-                leftFront.setPower(0);
-            if(!rightFront.isBusy())
-                rightFront.setPower(0);
-            if(!leftRear.isBusy())
-                leftRear.setPower(0);
-            if(!rightRear.isBusy())
-                rightRear.setPower(0);
-        }
-        allOff();
+    void allOnRight(){
+        leftFront.setPower(-1);
+        leftRear.setPower(-1);
+        rightRear.setPower(1);
+        rightFront.setPower(1);
     }
-    void strafe(float inches){
-        maxPower=(float).605;
-        leftFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftRear.setTargetPosition((int)(-inches * rotatePerInchStrafing));
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        rightFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        rightFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        allOn();
-        while(leftFront.isBusy() && opModeIsActive()) {
-            if(!leftFront.isBusy())
-                leftFront.setPower(0);
-            if(!rightFront.isBusy())
-                rightFront.setPower(0);
-            if(!leftRear.isBusy())
-                leftRear.setPower(0);
-            if(!rightRear.isBusy())
-                rightRear.setPower(0);
-        }
-        allOff();
+    void allOnLeft(){
+        leftFront.setPower(1);
+        leftRear.setPower(1);
+        rightRear.setPower(-1);
+        rightFront.setPower(-1);
     }
     void allOn(){
         leftFront.setPower(maxPower);
@@ -339,6 +221,13 @@ public class AutonomousOpMode extends LinearOpMode
         rightRear.setPower(1);
         rightFront.setPower(maxPower);
     }
+    void allOnForwardBack(){
+        leftFront.setPower(maxPower);
+        leftRear.setPower(maxPower);
+        rightRear.setPower(.48);
+        rightFront.setPower(.48);
+    }
+    
     void allOff(){
         leftFront.setPower(0);
         leftRear.setPower(0);
