@@ -43,8 +43,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@Autonomous(name = "Autonomous", group = "Iterative Opmode")
-public class AutonomousOpMode extends LinearOpMode
+@Autonomous(name = "park", group = "Iterative Opmode")
+public class OnlyParking extends LinearOpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -77,10 +77,10 @@ public class AutonomousOpMode extends LinearOpMode
         leftFront = hardwareMap.get(DcMotor.class, "left_front");
         rightRear = hardwareMap.get(DcMotor.class, "right_rear");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
-        rightFront.setTargetPosition(0);
-        leftFront.setTargetPosition(0);
-        rightRear.setTargetPosition(0);
-        leftRear.setTargetPosition(0);
+        //rightFront.setTargetPosition(0);
+        //leftFront.setTargetPosition(0);
+        //rightRear.setTargetPosition(0);
+        //leftRear.setTargetPosition(0);
         
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -91,39 +91,113 @@ public class AutonomousOpMode extends LinearOpMode
 
 
         // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
         waitForStart();
-        turn(true,(float)3);
         
+        strafeRight(5000);
+        allOff();
+        //forwardBackward(-10);
 
+        //turn(true,5);
+        telemetry.addData("Status", "Initialized");
     }
-    
-    
-    void forwardBackward(float inches){
+     void strafeRight(float inches){
+        //leftFront.setTargetPosition((int)(inches * rotatePerInchStrafing)+ 90000);
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition((int)(500000 * rotatePerInchForwardBackward) + 900000);
+        leftFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
 
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setTargetPosition((int)(500000 * rotatePerInchForwardBackward));
+        leftRear.setTargetPosition((int)(-inches * rotatePerInchStrafing));
+        
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setTargetPosition((int)(-inches * rotatePerInchStrafing));
+        
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setTargetPosition((int)(inches * rotatePerInchStrafing));
+
+        leftFront.setPower(0.405);
+        leftRear.setPower(-1);
+        rightFront.setPower(-0.405);
+        rightRear.setPower(1);
+        
+        while(rightRear.getCurrentPosition() < inches){
+        }
+    }
+    
+    void strafeLeft(float inches){
+        maxPower= (float)0.605;
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setTargetPosition((int)(-inches * rotatePerInchStrafing));
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setTargetPosition((int)(inches * rotatePerInchStrafing));
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setTargetPosition((int)(-inches * rotatePerInchStrafing));
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(-.405);
+        leftRear.setPower(1);
+        rightFront.setPower(.405);
+        rightRear.setPower(-1);
+        
+        while(rightFront.getCurrentPosition() < inches){}
+        allOff();
+    }
+    
+    void forwardBackward(float inches){
+        if(inches>(float)0){
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
+
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
 
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setTargetPosition((int)(500000 * rotatePerInchForwardBackward));
+        rightFront.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
 
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setTargetPosition((int)(500000 * rotatePerInchForwardBackward));
+        rightRear.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
+        leftFront.setPower(1);
+        leftRear.setPower(1);
+        rightRear.setPower(1);
+        rightFront.setPower(1);
+        }else{
+            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
 
-        allOnForwardBack();
-        while((leftFront.isBusy() ||rightFront.isBusy()||leftRear.isBusy()||rightRear.isBusy())&& opModeIsActive()) {
-            telemetry.addData("lf",leftFront.getCurrentPosition());
-            if(leftFront.getCurrentPosition()>inches){
-                break;
-            }
-            
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
+
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
+
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
+        leftFront.setPower(-1);
+        leftRear.setPower(-1);
+        rightRear.setPower(-1);
+        rightFront.setPower(-1);
+        
         }
+        
         allOff();
     }
     void turn(boolean right, float degrees){
@@ -133,41 +207,41 @@ public class AutonomousOpMode extends LinearOpMode
             
          leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward) - 900000);
+        leftFront.setTargetPosition((int)(-1000000 * rotatePerInchForwardBackward) - 900000);
 
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward));
+        leftRear.setTargetPosition((int)(-1000000 * rotatePerInchForwardBackward));
 
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setTargetPosition((int)(degrees * rotatePerInchForwardBackward));
+        rightFront.setTargetPosition((int)(100000 * rotatePerInchForwardBackward));
 
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setTargetPosition((int)(degrees * rotatePerInchForwardBackward));
+        rightRear.setTargetPosition((int)(100000 * rotatePerInchForwardBackward));
 
             allOnRight();
         }else{
              leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition((int)(degrees * rotatePerInchForwardBackward) - 900000);
+        leftFront.setTargetPosition((int)(10000000 * rotatePerInchForwardBackward) + 900000);
 
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setTargetPosition((int)(degrees * rotatePerInchForwardBackward));
+        leftRear.setTargetPosition((int)(100000000 * rotatePerInchForwardBackward));
 
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward));
+        rightFront.setTargetPosition((int)(-10000000 * rotatePerInchForwardBackward));
 
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setTargetPosition((int)(-degrees * rotatePerInchForwardBackward));
+        rightRear.setTargetPosition((int)(-1000000 * rotatePerInchForwardBackward));
 
             allOnLeft();
         }
-        while(leftFront.isBusy()) {
+        while(rightFront.isBusy()) {
             if(right){
             if(rightFront.getCurrentPosition()>degrees){
                 break;
@@ -182,11 +256,11 @@ public class AutonomousOpMode extends LinearOpMode
     
     void strafe(float inches){
         maxPower= (float)0.605;
-        leftFront.setTargetPosition((int)(500000 * rotatePerInchStrafing));
+        leftFront.setTargetPosition((int)(-500000 * rotatePerInchStrafing));
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftRear.setTargetPosition((int)(-500000 * rotatePerInchStrafing));
+        leftRear.setTargetPosition((int)(500000 * rotatePerInchStrafing));
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -194,7 +268,7 @@ public class AutonomousOpMode extends LinearOpMode
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        rightFront.setTargetPosition((int)(500000 * rotatePerInchStrafing));
+        rightRear.setTargetPosition((int)(-500000 * rotatePerInchStrafing));
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
