@@ -93,8 +93,25 @@ public class OnlyParking extends LinearOpMode
         // Tell the driver that initialization is complete.
         waitForStart();
         
-        strafeRight(5000);
+        strafeRight(3000);
+        strafeRight(3000);
         allOff();
+        sleep(20);
+        strafeRight(3000);
+        strafeRight(3000);
+        allOff();
+        sleep(20);
+        strafeRight(3000);
+        strafeRight(3000);
+        allOff();
+        sleep(20);
+        strafeLeft(3000);
+        strafeLeft(3000);
+        allOff();
+        sleep(20);
+        strafeLeft(3000);
+        allOff();
+        
         //forwardBackward(-10);
 
         //turn(true,5);
@@ -123,7 +140,7 @@ public class OnlyParking extends LinearOpMode
         rightFront.setPower(-0.405);
         rightRear.setPower(1);
         
-        while(rightRear.getCurrentPosition() < inches){
+        while(rightRear.getCurrentPosition() < 500){
         }
     }
     
@@ -150,7 +167,7 @@ public class OnlyParking extends LinearOpMode
         rightFront.setPower(.405);
         rightRear.setPower(-1);
         
-        while(rightFront.getCurrentPosition() < inches){}
+        while(rightFront.getCurrentPosition() > 500){}
         allOff();
     }
     
@@ -175,6 +192,7 @@ public class OnlyParking extends LinearOpMode
         leftRear.setPower(1);
         rightRear.setPower(1);
         rightFront.setPower(1);
+        while(leftRear<inches){}
         }else{
             leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -195,7 +213,8 @@ public class OnlyParking extends LinearOpMode
         leftRear.setPower(-1);
         rightRear.setPower(-1);
         rightFront.setPower(-1);
-        
+        while(leftRear>inches){}
+
         }
         
         allOff();
@@ -222,6 +241,9 @@ public class OnlyParking extends LinearOpMode
         rightRear.setTargetPosition((int)(100000 * rotatePerInchForwardBackward));
 
             allOnRight();
+            while(rightRear.getCurrentPosition()<500){
+                
+            }
         }else{
              leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -240,16 +262,11 @@ public class OnlyParking extends LinearOpMode
         rightRear.setTargetPosition((int)(-1000000 * rotatePerInchForwardBackward));
 
             allOnLeft();
-        }
-        while(rightFront.isBusy()) {
-            if(right){
-            if(rightFront.getCurrentPosition()>degrees){
-                break;
-            }
-            }else{
-            
+            while(leftRear.getCurrentPosition()>500){
+                
             }
         }
+      
         allOff();
     }
     
