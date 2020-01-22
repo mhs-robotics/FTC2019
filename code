@@ -1,0 +1,229 @@
+package org.firstinspires.ftc.teamcode.ftc16072.Util;
+
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import android.graphics.Color;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.ArrayList;
+
+/**
+ * Example Autonomous Opmode
+ *
+ * Uses Line-following two drive around the tape at the perimeter of the lander.
+ *
+ * Requires mechanum bot configuration.
+ *
+ * Start with bot in center of lander, facing top of screen.
+ *
+ * Disabling for now; it was designed to work with Rover Ruckus field
+ *
+ */
+@Autonomous(name = "mechbot auto demo", group = "Mechanum")
+public class MechBotAutoDemo extends LinearOpMode
+{
+    // Declare OpMode members.
+
+    private ElapsedTime runtime = new ElapsedTime();
+
+    final static float rotatePerInchForwardBackward = 1;
+    final static float rotatePerInchStrafing = 1;
+    final static float rotationsPerDegreeRightLeft = 1;
+    static float maxPower = (float)1;
+    private BNO055IMU imu;
+
+    private DcMotor leftRear;
+    private DcMotor leftFront;
+    private DcMotor rightRear;
+    private DcMotor rightFront;
+    private DcMotor spinRight;
+    private DcMotor spinLeft;
+
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        sleep(500);
+        telemetry.addData("Status", "Initialized");
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        leftRear  = hardwareMap.get(DcMotor.class, "left_rear");
+        leftFront = hardwareMap.get(DcMotor.class, "left_front");
+        rightRear = hardwareMap.get(DcMotor.class, "right_rear");
+        rightFront = hardwareMap.get(DcMotor.class, "right_front");
+        
+
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //spinLeft = hardwareMap.get(DcMotor.class, "spin_left");
+        //spinRight = hardwareMap.get(DcMotor.class, "spin_right");
+
+        rightFront.setTargetPosition(0);
+        leftFront.setTargetPosition(0);
+        rightRear.setTargetPosition(0);
+        leftRear.setTargetPosition(0);
+
+        //inizializesIMU (required calibration script to first have been run
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+          leftRear.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("Status", "Initialized");
+        waitForStart();
+        forwardBack(1,-10000);
+    }
+   
+ 
+  
+    public void forwardBack(double speed, double inches) {
+
+        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget;
+
+            // Determines position
+            newFrontLeftTarget =90000000+ leftFront.getCurrentPosition() + (int)(inches * rotatePerInchForwardBackward);
+            newBackLeftTarget = 90000000+leftRear.getCurrentPosition() +(int)(inches * rotatePerInchForwardBackward);
+            newFrontRightTarget = 90000000+rightFront.getCurrentPosition() - (int)(inches * rotatePerInchForwardBackward);
+            
+            newBackRightTarget = rightRear.getCurrentPosition()+(int)(inches * rotatePerInchForwardBackward);
+
+            leftFront.setTargetPosition(newFrontLeftTarget);
+            leftRear.setTargetPosition(newBackLeftTarget);
+            rightFront.setTargetPosition(newFrontRightTarget);
+            rightRear.setTargetPosition(newBackRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            leftRear.setPower(Math.abs(speed));
+            rightRear.setPower(Math.abs(speed));
+            leftFront.setPower(Math.abs(speed));
+            rightFront.setPower(Math.abs(speed));
+
+            while (Math.abs(rightRear.getCurrentPosition())<Math.abs(newBackRightTarget)) {
+                telemetry.addData("pos",rightRear.getCurrentPosition());
+                telemetry.addData("target",newBackRightTarget);
+
+                telemetry.update();
+            }
+
+           //allOff();
+
+            //rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+           // sleep(100);
+
+
+    }
+    void allOff(){
+        rightFront.setPower(0);
+        leftFront.setPower(0);
+        rightRear.setPower(0);
+        leftRear.setPower(0);
+    }
+
+
+    private double getAngle() {
+        return -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+    }
+    /*positive rotation is defined as right and the third value determines how close it is before it slows down.
+    the slow down is done to counter inertia. */
+    public void rotate(double degrees, double maxSpeed,double slowDown) {
+
+        double target = degrees + getAngle();
+        double error = 100;
+        double lastError = 0;
+
+        double leftPower = 1, rightPower;
+        double predPower = 0;
+        error = getError(getAngle(), target);
+        System.out.println(error);
+
+        if(error>0){
+            predPower=1;
+        }else{
+            predPower=-1;
+        }
+        while (Math.abs(error)>.1) {
+
+            error = getError(getAngle(), target);
+            System.out.println(error);
+
+           if(error>0){
+               predPower=1;
+           }else{
+               predPower=-1;
+           }
+
+            if (Math.abs(predPower) > Math.abs(maxSpeed)) {
+                predPower = predPower / Math.abs(predPower) * maxSpeed;
+            }
+
+                leftPower = predPower;
+                rightPower = -leftPower;
+
+            //when turning, in theory, right and left power are of the same magnitude and it slows down when close
+            //to the end of the motion
+            if(Math.abs(error)>slowDown) {
+                leftFront.setPower(leftPower);
+                leftRear.setPower(leftPower);
+                rightFront.setPower(-rightPower);
+                rightRear.setPower(-rightPower);
+            }else{
+                leftFront.setPower(leftPower/10);
+                leftRear.setPower(leftPower/10);
+                rightFront.setPower(-rightPower/10);
+                rightRear.setPower(-rightPower/10);
+            }
+        }
+    }
+    /*gets how many degrees off we are from a target*/
+    private double getError(double angle, double target) {
+        double error = target - angle;
+
+        /*flips the angle to be between the bounds of -180 and 180 so that the robot will go the
+        shorter path (if you did not do this rotation would always be in the same direction
+        so if you told the robot to rotate 359 degrees it would rotate all 359 degrees
+        instead of -1 degrees)*/
+        if (error > 180) {
+            error = error - 360;
+        }
+        return error;
+    }
+
+}
