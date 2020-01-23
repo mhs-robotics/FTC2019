@@ -117,6 +117,13 @@ public class MechBotAutoDemo extends LinearOpMode
         leftFront.setPower(Math.abs(0));
 
         rightFront.setPower(-Math.abs(0));
+        
+            telemetry.addData("pos",leftRear.getCurrentPosition());
+            telemetry.addData("pos",rightRear.getCurrentPosition());
+            telemetry.addData("pos",leftFront.getCurrentPosition());
+            telemetry.addData("pos",rightFront.getCurrentPosition());
+
+                telemetry.update();
     }
    
  
