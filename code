@@ -100,7 +100,7 @@ public class MechBotAutoDemo extends LinearOpMode
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        forward(1,1500);        
+        backward(1,10);        
     }
    
  
@@ -267,13 +267,13 @@ public class MechBotAutoDemo extends LinearOpMode
 
 
 
-        leftRear.setPower(-Math.abs(speed));
+        leftRear.setPower(Math.abs(speed));
 
-        rightRear.setPower(Math.abs(speed));
+        rightRear.setPower(-Math.abs(speed));
 
-        leftFront.setPower(-Math.abs(speed));
+        leftFront.setPower(Math.abs(speed));
 
-        rightFront.setPower(Math.abs(speed));
+        rightFront.setPower(-Math.abs(speed));
 
         while ((rightRear.isBusy() )) {
 
@@ -321,7 +321,7 @@ public class MechBotAutoDemo extends LinearOpMode
 
 
 
-        rightRear.setTargetPosition(newBackRightTarget);
+        rightRear.setTargetPosition(newBackRightTarget*10);
 
 
 
@@ -337,18 +337,15 @@ public class MechBotAutoDemo extends LinearOpMode
 
 
 rightFront.setPower(-Math.abs(speed));
-telemetry.addData("info",rightRear.getCurrentPosition() );
-            telemetry.addData("pos",newBackRightTarget);
 
-            telemetry.update();
        /// sleep(1000);
        rightFront.setPower(speed);
        
-        leftRear.setPower(Math.abs(speed));
+        leftRear.setPower(-Math.abs(speed));
 
         rightRear.setPower(Math.abs(speed));
 
-        leftFront.setPower(Math.abs(speed));
+        leftFront.setPower(-Math.abs(speed));
 
         
         while ((rightRear.getCurrentPosition()<newBackRightTarget)) {
