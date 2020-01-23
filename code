@@ -102,7 +102,135 @@ public class MechBotAutoDemo extends LinearOpMode
         waitForStart();
         backward(1,10000);
     }
-   
+    public void strafeStupidProof1Left(double speed, double inches) {
+
+
+
+
+
+        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget;
+
+
+
+
+
+        newFrontLeftTarget = leftFront.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
+
+        newBackLeftTarget = leftRear.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
+
+        newFrontRightTarget = rightFront.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
+
+        newBackRightTarget = rightRear.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
+
+
+
+
+
+
+
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+        leftFront.setPower(-Math.abs(speed) * Math.signum(inches));
+
+        leftRear.setPower(Math.abs(speed) * Math.signum(inches));
+
+        rightFront.setPower(-Math.abs(speed) * Math.signum(inches));
+
+        rightRear.setPower(Math.abs(speed) * Math.signum(inches));
+
+
+
+        while (leftRear.getCurrentPosition()<newBackLeftTarget) {
+
+
+
+        }
+
+
+
+        // Stop all motion;
+
+        allOff();
+
+
+
+        // Turn off RUN_TO_POSITION
+
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        sleep(100);
+
+
+
+    }
+
+    public void strafeStupidProof1Right(double speed, double inches) {
+
+
+
+
+
+        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget;
+        newFrontLeftTarget = leftFront.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
+
+        newBackLeftTarget = leftRear.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
+
+        newFrontRightTarget = rightFront.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
+
+        newBackRightTarget = rightRear.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
+
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+        leftFront.setPower(Math.abs(speed) * Math.signum(inches));
+
+        leftRear.setPower(-Math.abs(speed) * Math.signum(inches));
+
+        rightFront.setPower(Math.abs(speed) * Math.signum(inches));
+
+       rightRear.setPower(-Math.abs(speed) * Math.signum(inches));
+
+
+
+        while (leftRear.getCurrentPosition()>newBackLeftTarget) {
+
+        }
+
+        // Stop all motion;
+        allOff();
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sleep(100);
+    }
+
+
     public void backward(double speed, double inches){
 
 
