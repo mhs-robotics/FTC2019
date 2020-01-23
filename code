@@ -103,7 +103,77 @@ public class MechBotAutoDemo extends LinearOpMode
         forwardBack(1,-10000);
     }
    
- 
+    public void backward(double speed, double inches){
+
+
+
+        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget,total
+        newBackRightTarget = rightRear.getCurrentPosition() - (int)(inches * rotatePerInchForwardBackward);
+        rightRear.setTargetPosition(newBackRightTarget);
+        // Turn On RUN_TO_POSITION
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftRear.setPower(-Math.abs(speed));
+        rightRear.setPower(Math.abs(speed));
+        leftFront.setPower(-Math.abs(speed));
+        rightFront.setPower(Math.abs(speed));
+
+        while ((rightRear.isBusy() )) {
+        }
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setPower(speed);
+        allOff();
+
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sleep(100);
+
+    }
+
+    public void forward(double speed, double inches){
+
+
+
+        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget,total;
+        newBackRightTarget = rightRear.getCurrentPosition() + (int)(inches * rotatePerInchForwardBackward);
+        rightRear.setTargetPosition(newBackRightTarget);
+
+        // Turn On RUN_TO_POSITION
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftRear.setPower(Math.abs(speed));
+
+        rightRear.setPower(Math.abs(speed));
+
+        leftFront.setPower(Math.abs(speed));
+
+        rightFront.setPower(-Math.abs(speed));
+
+        while ((rightRear.isBusy())) {
+
+        }
+
+        allOff();
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sleep(100);
+
+    }
   
     public void forwardBack(double speed, double inches) {
 
