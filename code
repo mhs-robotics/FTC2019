@@ -89,7 +89,7 @@ public class MechBotAutoDemo extends LinearOpMode
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-           leftRear.setDirection(DcMotor.Direction.FORWARD);
+          leftRear.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -100,9 +100,11 @@ public class MechBotAutoDemo extends LinearOpMode
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        backward(1,10000);
+        forward(1,1500);        
     }
-    public void strafeStupidProof1Left(double speed, double inches) {
+   
+ 
+     public void strafeStupidProof1Left(double speed, double inches) {
 
 
 
@@ -313,7 +315,7 @@ public class MechBotAutoDemo extends LinearOpMode
 
 
 
-        newBackRightTarget = rightRear.getCurrentPosition() - (int)(inches * rotatePerInchForwardBackward);
+        newBackRightTarget = rightRear.getCurrentPosition() + (int)(inches * rotatePerInchForwardBackward);
 
 
 
@@ -334,16 +336,28 @@ public class MechBotAutoDemo extends LinearOpMode
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
+rightFront.setPower(-Math.abs(speed));
+telemetry.addData("info",rightRear.getCurrentPosition() );
+            telemetry.addData("pos",newBackRightTarget);
 
+            telemetry.update();
+       /// sleep(1000);
+       rightFront.setPower(speed);
+       
         leftRear.setPower(Math.abs(speed));
 
         rightRear.setPower(Math.abs(speed));
 
         leftFront.setPower(Math.abs(speed));
 
-        rightFront.setPower(-Math.abs(speed));
-
-        while ((rightRear.isBusy())) {
+        
+        while ((rightRear.getCurrentPosition()<newBackRightTarget)) {
+            if(rightRear.getCurrentPosition()>newBackRightTarget){
+                break;
+            }
+            telemetry.addData("info",rightRear.getCurrentPosition() );
+            telemetry.addData("pos",newBackRightTarget);
+            telemetry.update();
 
         }
 
@@ -366,7 +380,6 @@ public class MechBotAutoDemo extends LinearOpMode
         sleep(100);
 
     }
-  
     public void forwardBack(double speed, double inches) {
 
         int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget;
