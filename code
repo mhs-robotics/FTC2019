@@ -100,7 +100,15 @@ public class MechBotAutoDemo extends LinearOpMode
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        backward(1,10);        
+          leftRear.setPower(Math.abs(.1));
+
+        rightRear.setPower(-Math.abs(.1));
+
+        leftFront.setPower(Math.abs(.1));
+
+        rightFront.setPower(-Math.abs(.1));
+        
+        sleep(10000);
     }
    
  
