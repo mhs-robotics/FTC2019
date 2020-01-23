@@ -109,6 +109,14 @@ public class MechBotAutoDemo extends LinearOpMode
         rightFront.setPower(-Math.abs(.1));
         
         sleep(10000);
+        
+        leftRear.setPower(Math.abs(0));
+
+        rightRear.setPower(-Math.abs(0));
+
+        leftFront.setPower(Math.abs(0));
+
+        rightFront.setPower(-Math.abs(0));
     }
    
  
