@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc16072.Util;
 
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
  * Disabling for now; it was designed to work with Rover Ruckus field
  *
  */
-@Autonomous(name = "mechbot auto demo", group = "Mechanum")
+@Autonomous(name = "mechbot auto demo", group = "Iterative Opmode")
 public class MechBotAutoDemo extends LinearOpMode
 {
     // Declare OpMode members.
@@ -89,8 +90,8 @@ public class MechBotAutoDemo extends LinearOpMode
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-          leftRear.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
+          leftRear.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         
@@ -100,33 +101,23 @@ public class MechBotAutoDemo extends LinearOpMode
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("Status", "Initialized");
         waitForStart();
-          leftRear.setPower(Math.abs(.1));
-
-        rightRear.setPower(-Math.abs(.1));
-
-        leftFront.setPower(Math.abs(.1));
-
-        rightFront.setPower(-Math.abs(.1));
+        telemetry.addData("pos",rightRear.getCurrentPosition() );
+            telemetry.update();
+            sleep(3000);
+          leftRear.setPower(.5);
+                leftFront.setPower(-.5);
+                rightRear.setPower(-.5);
+                rightFront.setPower(.5);
         
-        sleep(10000);
         
-        leftRear.setPower(Math.abs(0));
-
-        rightRear.setPower(-Math.abs(0));
-
-        leftFront.setPower(Math.abs(0));
-
-        rightFront.setPower(-Math.abs(0));
+        while(true){
+            telemetry.addData("pos",rightRear.getCurrentPosition() );
+            telemetry.update();
+        }
         
-            telemetry.addData("pos",leftRear.getCurrentPosition());
-            telemetry.addData("pos",rightRear.getCurrentPosition());
-            telemetry.addData("pos",leftFront.getCurrentPosition());
-            telemetry.addData("pos",rightFront.getCurrentPosition());
-
-                telemetry.update();
     }
    
-     //see rightStrafe for documentation--only difference is all values are negated
+  //see rightStrafe for documentation--only difference is all values are negated
       void leftStrafe(double speedMax, double speedMin, double inches) {
         speedMax/=2;
         speedMin/=2;
@@ -294,4 +285,5 @@ public class MechBotAutoDemo extends LinearOpMode
         rightRear.setPower(0);
         leftRear.setPower(0);
     }
+  
 }
