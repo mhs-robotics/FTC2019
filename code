@@ -127,398 +127,171 @@ public class MechBotAutoDemo extends LinearOpMode
     }
    
  
-     public void strafeStupidProof1Left(double speed, double inches) {
-
-
-
-
-
-        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget;
-
-
-
-
-
-        newFrontLeftTarget = leftFront.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
-
-        newBackLeftTarget = leftRear.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
-
-        newFrontRightTarget = rightFront.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
-
-        newBackRightTarget = rightRear.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
-
-
-
-
-
-
+      void leftStrafe(double speedMax, double speedMin, double inches) {
+        speedMax/=2;
+        speedMin/=2;
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-
-        leftFront.setPower(-Math.abs(speed) * Math.signum(inches));
-
-        leftRear.setPower(Math.abs(speed) * Math.signum(inches));
-
-        rightFront.setPower(-Math.abs(speed) * Math.signum(inches));
-
-        rightRear.setPower(Math.abs(speed) * Math.signum(inches));
-
-
-
-        while (leftRear.getCurrentPosition()<newBackLeftTarget) {
-
-
-
-        }
-
-
-
-        // Stop all motion;
-
-        allOff();
-
-
-
-        // Turn off RUN_TO_POSITION
-
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        sleep(100);
-
-
-
-    }
-
-    public void strafeStupidProof1Right(double speed, double inches) {
-
-
-
-
-
-        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget;
-        newFrontLeftTarget = leftFront.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
-
-        newBackLeftTarget = leftRear.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
-
-        newFrontRightTarget = rightFront.getCurrentPosition() + (int)(inches * rotatePerInchStrafing);
-
-        newBackRightTarget = rightRear.getCurrentPosition() - (int)(inches * rotatePerInchStrafing);
-
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-
-        leftFront.setPower(Math.abs(speed) * Math.signum(inches));
-
-        leftRear.setPower(-Math.abs(speed) * Math.signum(inches));
-
-        rightFront.setPower(Math.abs(speed) * Math.signum(inches));
-
-       rightRear.setPower(-Math.abs(speed) * Math.signum(inches));
-
-
-
-        while (leftRear.getCurrentPosition()>newBackLeftTarget) {
-
-        }
-
-        // Stop all motion;
-        allOff();
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        sleep(100);
-    }
-
-
-    public void backward(double speed, double inches){
-
-
-
-        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget,total;
-
-
-
-
-
-
-
-        newBackRightTarget = rightRear.getCurrentPosition() + (int)(inches * rotatePerInchForwardBackward);
-
-
-
-
-
-        rightRear.setTargetPosition(newBackRightTarget);
-
-
-
-        // Turn On RUN_TO_POSITION
-
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-
-        leftRear.setPower(Math.abs(speed));
-
-        rightRear.setPower(-Math.abs(speed));
-
-        leftFront.setPower(Math.abs(speed));
-
-        rightFront.setPower(-Math.abs(speed));
-
-        while ((rightRear.isBusy() )) {
-
-
-
-        }
-
-        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightRear.setPower(speed);
-
-        allOff();
-
-
-
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
-        sleep(100);
-
-    }
-
-    public void forward(double speed, double inches){
-
-
-
-        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget,total;
-
-
-
-
-
-
-
-        newBackRightTarget = rightRear.getCurrentPosition() + (int)(inches * rotatePerInchForwardBackward);
-
-
-
-
-
-        rightRear.setTargetPosition(newBackRightTarget*10);
-
-
-
-        // Turn On RUN_TO_POSITION
-
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-rightFront.setPower(-Math.abs(speed));
-
-       /// sleep(1000);
-       rightFront.setPower(speed);
-       
-        leftRear.setPower(-Math.abs(speed));
-
-        rightRear.setPower(Math.abs(speed));
-
-        leftFront.setPower(-Math.abs(speed));
-
-        
-        while ((rightRear.getCurrentPosition()<newBackRightTarget)) {
-            if(rightRear.getCurrentPosition()>newBackRightTarget){
+        leftRear.setPower(speedMax);
+        leftFront.setPower(-speedMax);
+        rightRear.setPower(-speedMax);
+        rightFront.setPower(speedMax);
+        double total=leftRear.getCurrentPosition()+inches;
+        double start=leftRear.getCurrentPosition();
+        while(leftRear.getCurrentPosition()<total){
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+            if(inertiaCancel<0.02){
                 break;
             }
-            telemetry.addData("info",rightRear.getCurrentPosition() );
-            telemetry.addData("pos",newBackRightTarget);
-            telemetry.update();
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+
+                leftRear.setPower(speedMin);
+                leftFront.setPower(-speedMin);
+                rightRear.setPower(-speedMin);
+                rightFront.setPower(speedMin);
+            }else {
+                leftRear.setPower(speedMax * inertiaCancel);
+                leftFront.setPower(-speedMax * inertiaCancel);
+                rightRear.setPower(-speedMax * inertiaCancel);
+                rightFront.setPower(speedMax * inertiaCancel);
+            }
+        }
+        allOff();
+    }
+
+
+
+    void rightStrafe(double speedMax, double speedMin, double inches){
+        //choose 1 motor to do all the counting (this should stay consistent across all methods then reset that motors
+        //encoders
+        speedMax/=2;
+        speedMin/=2;
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //set all speeds to negative 1 for backward
+        leftRear.setPower(-speedMax);
+        leftFront.setPower(speedMax);
+        rightRear.setPower(speedMax);
+        rightFront.setPower(-speedMax);
+
+        //declare variables for total target position and start position
+        double total=leftRear.getCurrentPosition()-inches;
+        double start=leftRear.getCurrentPosition();
+
+        //this whileloop runs while the robot has not gone farther past the total
+        while(leftRear.getCurrentPosition()>total){
+            //the inertia cancel varaible calculates the percentage that your motion is complete
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+
+            //one it gets so low that the power would be negladble, stop the loop (it goes all the way to infinity if this
+            //is not done
+            if(inertiaCancel<0.02){
+                break;
+            }
+            //check if we exceeded max speed
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+
+                leftRear.setPower(-speedMin);
+                leftFront.setPower(speedMin);
+                rightRear.setPower(speedMin);
+                rightFront.setPower(-speedMin);
+            }else {
+                leftRear.setPower(-speedMax * inertiaCancel);
+                leftFront.setPower(speedMax * inertiaCancel);
+                rightRear.setPower(speedMax * inertiaCancel);
+                rightFront.setPower(-speedMax * inertiaCancel);
+            }
 
         }
-
-
-
         allOff();
+    }
 
+    void backward(double speedMax,double speedMin,double inches){
+        //choose 1 motor to do all the counting (this should stay consistent across all methods then reset that motors
+        //encoders
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //set all speeds to negative 1 for backward
+        leftRear.setPower(-speedMax);
+        leftFront.setPower(-speedMax);
+        rightRear.setPower(-speedMax);
+        rightFront.setPower(-speedMax);
 
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //declare variables for total target position and start position
+        double total=leftRear.getCurrentPosition()-inches;
+        double start=leftRear.getCurrentPosition();
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //this whileloop runs while the robot has not gone farther past the total
+        while(leftRear.getCurrentPosition()>total){
+            //the inertia cancel varaible calculates the percentage that your motion is complete
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
 
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //one it gets so low that the power would be negladble, stop the loop (it goes all the way to infinity if this
+            //is not done
+            if(inertiaCancel<0.02){
+                break;
+            }
+            //check if we exceeded max speed
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+
+                leftRear.setPower(-speedMin);
+                leftFront.setPower(-speedMin);
+                rightRear.setPower(-speedMin);
+                rightFront.setPower(-speedMin);
+            }else {
+                leftRear.setPower(-speedMax * inertiaCancel);
+                leftFront.setPower(-speedMax * inertiaCancel);
+                rightRear.setPower(-speedMax * inertiaCancel);
+                rightFront.setPower(-speedMax * inertiaCancel);
+            }
+
+        }
+        allOff();
+    }
+
+    //see backward for documentation--only difference is all values are negated
+    void forward(double speedMax, double speedMin, double inches){
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
-        sleep(100);
-
-    }
-    public void forwardBack(double speed, double inches) {
-
-        int newFrontLeftTarget, newBackLeftTarget, newFrontRightTarget, newBackRightTarget;
-
-            // Determines position
-            newFrontLeftTarget =90000000+ leftFront.getCurrentPosition() + (int)(inches * rotatePerInchForwardBackward);
-            newBackLeftTarget = 90000000+leftRear.getCurrentPosition() +(int)(inches * rotatePerInchForwardBackward);
-            newFrontRightTarget = 90000000+rightFront.getCurrentPosition() - (int)(inches * rotatePerInchForwardBackward);
-            
-            newBackRightTarget = rightRear.getCurrentPosition()+(int)(inches * rotatePerInchForwardBackward);
-
-            leftFront.setTargetPosition(newFrontLeftTarget);
-            leftRear.setTargetPosition(newBackLeftTarget);
-            rightFront.setTargetPosition(newFrontRightTarget);
-            rightRear.setTargetPosition(newBackRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            leftRear.setPower(Math.abs(speed));
-            rightRear.setPower(Math.abs(speed));
-            leftFront.setPower(Math.abs(speed));
-            rightFront.setPower(Math.abs(speed));
-
-            while (Math.abs(rightRear.getCurrentPosition())<Math.abs(newBackRightTarget)) {
-                telemetry.addData("pos",rightRear.getCurrentPosition());
-                telemetry.addData("target",newBackRightTarget);
-
-                telemetry.update();
+        leftRear.setPower(speedMax);
+        leftFront.setPower(speedMax);
+        rightRear.setPower(speedMax);
+        rightFront.setPower(speedMax);
+        double total=leftRear.getCurrentPosition()+inches;
+        double start=leftRear.getCurrentPosition();
+        while(leftRear.getCurrentPosition()<total){
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+            if(inertiaCancel<0.02){
+                break;
             }
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
 
-           //allOff();
-
-            //rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-           // sleep(100);
-
-
+                leftRear.setPower(speedMin);
+                leftFront.setPower(speedMin);
+                rightRear.setPower(speedMin);
+                rightFront.setPower(speedMin);
+            }else {
+                leftRear.setPower(speedMax * inertiaCancel);
+                leftFront.setPower(speedMax * inertiaCancel);
+                rightRear.setPower(speedMax * inertiaCancel);
+                rightFront.setPower(speedMax * inertiaCancel);
+            }
+        }
+        allOff();
     }
+    //turns all motors off
     void allOff(){
         rightFront.setPower(0);
         leftFront.setPower(0);
         rightRear.setPower(0);
         leftRear.setPower(0);
     }
-
-
-    private double getAngle() {
-        return -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-    }
-    /*positive rotation is defined as right and the third value determines how close it is before it slows down.
-    the slow down is done to counter inertia. */
-    public void rotate(double degrees, double maxSpeed,double slowDown) {
-
-        double target = degrees + getAngle();
-        double error = 100;
-        double lastError = 0;
-
-        double leftPower = 1, rightPower;
-        double predPower = 0;
-        error = getError(getAngle(), target);
-        System.out.println(error);
-
-        if(error>0){
-            predPower=1;
-        }else{
-            predPower=-1;
-        }
-        while (Math.abs(error)>.1) {
-
-            error = getError(getAngle(), target);
-            System.out.println(error);
-
-           if(error>0){
-               predPower=1;
-           }else{
-               predPower=-1;
-           }
-
-            if (Math.abs(predPower) > Math.abs(maxSpeed)) {
-                predPower = predPower / Math.abs(predPower) * maxSpeed;
-            }
-
-                leftPower = predPower;
-                rightPower = -leftPower;
-
-            //when turning, in theory, right and left power are of the same magnitude and it slows down when close
-            //to the end of the motion
-            if(Math.abs(error)>slowDown) {
-                leftFront.setPower(leftPower);
-                leftRear.setPower(leftPower);
-                rightFront.setPower(-rightPower);
-                rightRear.setPower(-rightPower);
-            }else{
-                leftFront.setPower(leftPower/10);
-                leftRear.setPower(leftPower/10);
-                rightFront.setPower(-rightPower/10);
-                rightRear.setPower(-rightPower/10);
-            }
-        }
-    }
-    /*gets how many degrees off we are from a target*/
-    private double getError(double angle, double target) {
-        double error = target - angle;
-
-        /*flips the angle to be between the bounds of -180 and 180 so that the robot will go the
-        shorter path (if you did not do this rotation would always be in the same direction
-        so if you told the robot to rotate 359 degrees it would rotate all 359 degrees
-        instead of -1 degrees)*/
-        if (error > 180) {
-            error = error - 360;
-        }
-        return error;
-    }
-
 }
