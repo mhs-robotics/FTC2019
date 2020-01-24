@@ -126,7 +126,7 @@ public class MechBotAutoDemo extends LinearOpMode
                 telemetry.update();
     }
    
- 
+     //see rightStrafe for documentation--only difference is all values are negated
       void leftStrafe(double speedMax, double speedMin, double inches) {
         speedMax/=2;
         speedMin/=2;
