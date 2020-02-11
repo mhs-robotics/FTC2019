@@ -1,4 +1,4 @@
-package org.xguzm.pathfinding.test;
+package org.firstinspires.ftc.teamcode;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import org.xguzm.pathfinding.grid.heuristics.ManhattanDistance;
 
 public class AStarFinderTest {
 	public static void testMovementPath() {
-    NavigationGrid<GridCell> grid;
+   		NavigationGrid<GridCell> grid;
 		AStarFinder<GridCell> finder;
 		GridFinderOptions opt;
-    grid = NavGraphFactory.getGridCellMap();	
+    		grid = NavGraphFactory.getGridCellMap();	
 		opt = new GridFinderOptions();
 		finder = new AStarFinder<GridCell>(GridCell.class, opt);
 
@@ -42,7 +42,7 @@ public class AStarFinderTest {
 			float dst = heuristic.calculate(current, prev);
 			//weather you use forward or strafe depends on start oreintation.
 			//deviding by 5 is done because the astarSetup script I created is based on a
-      //720X720 grid
+     			//720X720 grid
 			if(path.get(i).getY()==path.get(i-1).getY()){
 				if(path.get(i).getX>path.getY(i-1).getX()){
 					Robot.rightStrafe(1,.1,dist/5);
