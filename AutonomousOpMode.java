@@ -117,107 +117,183 @@ public class OnlyParking extends LinearOpMode
         //turn(true,5);
         telemetry.addData("Status", "Initialized");
     }
-     void strafeRight(float inches){
-        //leftFront.setTargetPosition((int)(inches * rotatePerInchStrafing)+ 90000);
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
-
+    void leftStrafe(double speedMax, double speedMin, double inches) {
+        speedMax/=2;
+        speedMin/=2;
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setTargetPosition((int)(-inches * rotatePerInchStrafing));
-        
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setTargetPosition((int)(-inches * rotatePerInchStrafing));
-        
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setTargetPosition((int)(inches * rotatePerInchStrafing));
 
-        leftFront.setPower(0.405);
-        leftRear.setPower(-1);
-        rightFront.setPower(-0.405);
-        rightRear.setPower(1);
-        
-        while(rightRear.getCurrentPosition() < 500){
-        }
-    }
-    
-    void strafeLeft(float inches){
-        maxPower= (float)0.605;
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setTargetPosition((int)(-inches * rotatePerInchStrafing));
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setTargetPosition((int)(inches * rotatePerInchStrafing));
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setTargetPosition((int)(inches * rotatePerInchStrafing));
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setPower(speedMax);
+        leftFront.setPower(-speedMax);
+        rightRear.setPower(-speedMax);
+        rightFront.setPower(speedMax);
+        double total=leftRear.getCurrentPosition()+inches;
+        double start=leftRear.getCurrentPosition();
+        while(leftRear.getCurrentPosition()<total){
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+            if(inertiaCancel<0.02){
+                break;
+            }
+            telemetry.addData("percent complete",1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total));
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+                telemetry.addData("percent complete",1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total));
 
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setTargetPosition((int)(-inches * rotatePerInchStrafing));
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftFront.setPower(-.405);
-        leftRear.setPower(1);
-        rightFront.setPower(.405);
-        rightRear.setPower(-1);
-        
-        while(rightFront.getCurrentPosition() > 500){}
-        allOff();
-    }
-    
-    void forwardBackward(float inches){
-        if(inches>(float)0){
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
-
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
-
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
-
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setTargetPosition((int)(inches * rotatePerInchForwardBackward));
-        leftFront.setPower(1);
-        leftRear.setPower(1);
-        rightRear.setPower(1);
-        rightFront.setPower(1);
-        while(leftRear<inches){}
-        }else{
-            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
-
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
-
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
-
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setTargetPosition((int)(-inches * rotatePerInchForwardBackward));
-        leftFront.setPower(-1);
-        leftRear.setPower(-1);
-        rightRear.setPower(-1);
-        rightFront.setPower(-1);
-        while(leftRear>inches){}
+                leftRear.setPower(speedMin);
+                leftFront.setPower(-speedMin);
+                rightRear.setPower(-speedMin);
+                rightFront.setPower(speedMin);
+            }else {
+                leftRear.setPower(speedMax * inertiaCancel);
+                leftFront.setPower(-speedMax * inertiaCancel);
+                rightRear.setPower(-speedMax * inertiaCancel);
+                rightFront.setPower(speedMax * inertiaCancel);
+            }
+            telemetry.update();
 
         }
-        
         allOff();
+    }
+
+
+
+    void rightStrafe(double speedMax, double speedMin, double inches){
+        //choose 1 motor to do all the counting (this should stay consistent across all methods then reset that motors
+        //encoders
+        speedMax/=2;
+        speedMin/=2;
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //set all speeds to negative 1 for backward
+        leftRear.setPower(-speedMax);
+        leftFront.setPower(speedMax);
+        rightRear.setPower(speedMax);
+        rightFront.setPower(-speedMax);
+
+        //declare variables for total target position and start position
+        double total=leftRear.getCurrentPosition()-inches;
+        double start=leftRear.getCurrentPosition();
+
+        //this whileloop runs while the robot has not gone farther past the total
+        while(leftRear.getCurrentPosition()>total){
+            //the inertia cancel varaible calculates the percentage that your motion is complete
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+
+            //one it gets so low that the power would be negladble, stop the loop (it goes all the way to infinity if this
+            //is not done
+            if(inertiaCancel<0.02){
+                break;
+            }
+            //check if we exceeded max speed
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+                telemetry.addData("percent complete",1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total));
+
+                leftRear.setPower(-speedMin);
+                leftFront.setPower(speedMin);
+                rightRear.setPower(speedMin);
+                rightFront.setPower(-speedMin);
+            }else {
+                leftRear.setPower(-speedMax * inertiaCancel);
+                leftFront.setPower(speedMax * inertiaCancel);
+                rightRear.setPower(speedMax * inertiaCancel);
+                rightFront.setPower(-speedMax * inertiaCancel);
+            }
+            telemetry.update();
+
+        }
+        allOff();
+    }
+
+
+    void backward(double speedMax, double speedMin, double inches){
+        //choose 1 motor to do all the counting (this should stay consistent across all methods then reset that motors
+        //encoders
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //set all speeds to negative 1 for backward
+        leftRear.setPower(-speedMax);
+        leftFront.setPower(-speedMax);
+        rightRear.setPower(-speedMax);
+        rightFront.setPower(-speedMax);
+
+        //declare variables for total target position and start position
+        double total=leftRear.getCurrentPosition()-inches;
+        double start=leftRear.getCurrentPosition();
+
+        //this whileloop runs while the robot has not gone farther past the total
+        while(leftRear.getCurrentPosition()>total){
+            //the inertia cancel varaible calculates the percentage that your motion is complete
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+
+            //one it gets so low that the power would be negladble, stop the loop (it goes all the way to infinity if this
+            //is not done
+            if(inertiaCancel<0.02){
+                break;
+            }
+            //check if we exceeded max speed
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+                telemetry.addData("percent complete",1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total));
+
+                leftRear.setPower(-speedMin);
+                leftFront.setPower(-speedMin);
+                rightRear.setPower(-speedMin);
+                rightFront.setPower(-speedMin);
+            }else {
+                leftRear.setPower(-speedMax * inertiaCancel);
+                leftFront.setPower(-speedMax * inertiaCancel);
+                rightRear.setPower(-speedMax * inertiaCancel);
+                rightFront.setPower(-speedMax * inertiaCancel);
+            }
+            telemetry.update();
+
+        }
+        allOff();
+    }
+
+
+   void forward(double speedMax, double speedMin, double inches){
+       leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+       leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+       leftRear.setPower(speedMax);
+       leftFront.setPower(speedMax);
+       rightRear.setPower(speedMax);
+       rightFront.setPower(speedMax);
+       double total=leftRear.getCurrentPosition()+inches;
+       double start=leftRear.getCurrentPosition();
+       while(leftRear.getCurrentPosition()<total){
+           double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+           if(inertiaCancel<0.02){
+               break;
+           }
+           telemetry.addData("percent complete",1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total));
+           if(Math.abs(speedMax*inertiaCancel)<speedMin){
+               telemetry.addData("percent complete",1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total));
+
+               leftRear.setPower(speedMin);
+               leftFront.setPower(speedMin);
+               rightRear.setPower(speedMin);
+               rightFront.setPower(speedMin);
+           }else {
+               leftRear.setPower(speedMax * inertiaCancel);
+               leftFront.setPower(speedMax * inertiaCancel);
+               rightRear.setPower(speedMax * inertiaCancel);
+               rightFront.setPower(speedMax * inertiaCancel);
+           }
+            telemetry.update();
+       }
+       allOff();
+   }
+    void allOff(){
+        rightFront.setPower(0);
+        leftFront.setPower(0);
+        rightRear.setPower(0);
+        leftRear.setPower(0);
     }
     void turn(boolean right, float degrees){
         
@@ -269,31 +345,7 @@ public class OnlyParking extends LinearOpMode
       
         allOff();
     }
-    
-    
-    void strafe(float inches){
-        maxPower= (float)0.605;
-        leftFront.setTargetPosition((int)(-500000 * rotatePerInchStrafing));
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftRear.setTargetPosition((int)(500000 * rotatePerInchStrafing));
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        rightFront.setTargetPosition((int)(500000 * rotatePerInchStrafing));
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        rightRear.setTargetPosition((int)(-500000 * rotatePerInchStrafing));
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        allOn();
-        while(leftFront.isBusy() ||rightFront.isBusy()||leftRear.isBusy()||rightRear.isBusy()&& opModeIsActive()) {
-        }
-        allOff();
-    }
+   
     void allOnRight(){
         leftFront.setPower(-1);
         leftRear.setPower(-1);
@@ -319,11 +371,5 @@ public class OnlyParking extends LinearOpMode
         rightFront.setPower(.48);
     }
     
-    void allOff(){
-        leftFront.setPower(0);
-        leftRear.setPower(0);
-        rightRear.setPower(0);
-        rightFront.setPower(0);
-    }
-
+ 
 }

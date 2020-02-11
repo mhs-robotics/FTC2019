@@ -1,0 +1,289 @@
+package org.firstinspires.ftc.teamcode.ftc16072.Util;
+
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import android.graphics.Color;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.ArrayList;
+
+/**
+ * Example Autonomous Opmode
+ *
+ * Uses Line-following two drive around the tape at the perimeter of the lander.
+ *
+ * Requires mechanum bot configuration.
+ *
+ * Start with bot in center of lander, facing top of screen.
+ *
+ * Disabling for now; it was designed to work with Rover Ruckus field
+ *
+ */
+@Autonomous(name = "mechbot auto demo", group = "Iterative Opmode")
+public class MechBotAutoDemo extends LinearOpMode
+{
+    // Declare OpMode members.
+
+    private ElapsedTime runtime = new ElapsedTime();
+
+    final static float rotatePerInchForwardBackward = 1;
+    final static float rotatePerInchStrafing = 1;
+    final static float rotationsPerDegreeRightLeft = 1;
+    static float maxPower = (float)1;
+    private BNO055IMU imu;
+
+    private DcMotor leftRear;
+    private DcMotor leftFront;
+    private DcMotor rightRear;
+    private DcMotor rightFront;
+    private DcMotor spinRight;
+    private DcMotor spinLeft;
+
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        sleep(500);
+        telemetry.addData("Status", "Initialized");
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        leftRear  = hardwareMap.get(DcMotor.class, "left_rear");
+        leftFront = hardwareMap.get(DcMotor.class, "left_front");
+        rightRear = hardwareMap.get(DcMotor.class, "right_rear");
+        rightFront = hardwareMap.get(DcMotor.class, "right_front");
+        
+
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //spinLeft = hardwareMap.get(DcMotor.class, "spin_left");
+        //spinRight = hardwareMap.get(DcMotor.class, "spin_right");
+
+        rightFront.setTargetPosition(0);
+        leftFront.setTargetPosition(0);
+        rightRear.setTargetPosition(0);
+        leftRear.setTargetPosition(0);
+
+        //inizializesIMU (required calibration script to first have been run
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+          leftRear.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("Status", "Initialized");
+        waitForStart();
+        telemetry.addData("pos",rightRear.getCurrentPosition() );
+            telemetry.update();
+            sleep(3000);
+          leftRear.setPower(.5);
+                leftFront.setPower(-.5);
+                rightRear.setPower(-.5);
+                rightFront.setPower(.5);
+        
+        
+        while(true){
+            telemetry.addData("pos",rightRear.getCurrentPosition() );
+            telemetry.update();
+        }
+        
+    }
+   
+  //see rightStrafe for documentation--only difference is all values are negated
+      void leftStrafe(double speedMax, double speedMin, double inches) {
+        speedMax/=2;
+        speedMin/=2;
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        leftRear.setPower(speedMax);
+        leftFront.setPower(-speedMax);
+        rightRear.setPower(-speedMax);
+        rightFront.setPower(speedMax);
+        double total=leftRear.getCurrentPosition()+inches;
+        double start=leftRear.getCurrentPosition();
+        while(leftRear.getCurrentPosition()<total){
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+            if(inertiaCancel<0.02){
+                break;
+            }
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+
+                leftRear.setPower(speedMin);
+                leftFront.setPower(-speedMin);
+                rightRear.setPower(-speedMin);
+                rightFront.setPower(speedMin);
+            }else {
+                leftRear.setPower(speedMax * inertiaCancel);
+                leftFront.setPower(-speedMax * inertiaCancel);
+                rightRear.setPower(-speedMax * inertiaCancel);
+                rightFront.setPower(speedMax * inertiaCancel);
+            }
+        }
+        allOff();
+    }
+
+
+
+    void rightStrafe(double speedMax, double speedMin, double inches){
+        //choose 1 motor to do all the counting (this should stay consistent across all methods then reset that motors
+        //encoders
+        speedMax/=2;
+        speedMin/=2;
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //set all speeds to negative 1 for backward
+        leftRear.setPower(-speedMax);
+        leftFront.setPower(speedMax);
+        rightRear.setPower(speedMax);
+        rightFront.setPower(-speedMax);
+
+        //declare variables for total target position and start position
+        double total=leftRear.getCurrentPosition()-inches;
+        double start=leftRear.getCurrentPosition();
+
+        //this whileloop runs while the robot has not gone farther past the total
+        while(leftRear.getCurrentPosition()>total){
+            //the inertia cancel varaible calculates the percentage that your motion is complete
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+
+            //one it gets so low that the power would be negladble, stop the loop (it goes all the way to infinity if this
+            //is not done
+            if(inertiaCancel<0.02){
+                break;
+            }
+            //check if we exceeded max speed
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+
+                leftRear.setPower(-speedMin);
+                leftFront.setPower(speedMin);
+                rightRear.setPower(speedMin);
+                rightFront.setPower(-speedMin);
+            }else {
+                leftRear.setPower(-speedMax * inertiaCancel);
+                leftFront.setPower(speedMax * inertiaCancel);
+                rightRear.setPower(speedMax * inertiaCancel);
+                rightFront.setPower(-speedMax * inertiaCancel);
+            }
+
+        }
+        allOff();
+    }
+
+    void backward(double speedMax,double speedMin,double inches){
+        //choose 1 motor to do all the counting (this should stay consistent across all methods then reset that motors
+        //encoders
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //set all speeds to negative 1 for backward
+        leftRear.setPower(-speedMax);
+        leftFront.setPower(-speedMax);
+        rightRear.setPower(-speedMax);
+        rightFront.setPower(-speedMax);
+
+        //declare variables for total target position and start position
+        double total=leftRear.getCurrentPosition()-inches;
+        double start=leftRear.getCurrentPosition();
+
+        //this whileloop runs while the robot has not gone farther past the total
+        while(leftRear.getCurrentPosition()>total){
+            //the inertia cancel varaible calculates the percentage that your motion is complete
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+
+            //one it gets so low that the power would be negladble, stop the loop (it goes all the way to infinity if this
+            //is not done
+            if(inertiaCancel<0.02){
+                break;
+            }
+            //check if we exceeded max speed
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+
+                leftRear.setPower(-speedMin);
+                leftFront.setPower(-speedMin);
+                rightRear.setPower(-speedMin);
+                rightFront.setPower(-speedMin);
+            }else {
+                leftRear.setPower(-speedMax * inertiaCancel);
+                leftFront.setPower(-speedMax * inertiaCancel);
+                rightRear.setPower(-speedMax * inertiaCancel);
+                rightFront.setPower(-speedMax * inertiaCancel);
+            }
+
+        }
+        allOff();
+    }
+
+    //see backward for documentation--only difference is all values are negated
+    void forward(double speedMax, double speedMin, double inches){
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        leftRear.setPower(speedMax);
+        leftFront.setPower(speedMax);
+        rightRear.setPower(speedMax);
+        rightFront.setPower(speedMax);
+        double total=leftRear.getCurrentPosition()+inches;
+        double start=leftRear.getCurrentPosition();
+        while(leftRear.getCurrentPosition()<total){
+            double inertiaCancel=1-Math.abs(start-leftRear.getCurrentPosition())/Math.abs(total);
+            if(inertiaCancel<0.02){
+                break;
+            }
+            if(Math.abs(speedMax*inertiaCancel)<speedMin){
+
+                leftRear.setPower(speedMin);
+                leftFront.setPower(speedMin);
+                rightRear.setPower(speedMin);
+                rightFront.setPower(speedMin);
+            }else {
+                leftRear.setPower(speedMax * inertiaCancel);
+                leftFront.setPower(speedMax * inertiaCancel);
+                rightRear.setPower(speedMax * inertiaCancel);
+                rightFront.setPower(speedMax * inertiaCancel);
+            }
+        }
+        allOff();
+    }
+    //turns all motors off
+    void allOff(){
+        rightFront.setPower(0);
+        leftFront.setPower(0);
+        rightRear.setPower(0);
+        leftRear.setPower(0);
+    }
+  
+}
