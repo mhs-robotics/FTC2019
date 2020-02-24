@@ -66,13 +66,18 @@ public class TeleOp2019 extends OpMode {
     private Servo grabServo = null;
     private Servo rotateServo = null;
     private Servo elementServo = null;
+    private Servo leftPlat = null;
+    private Servo rightPlat = null;
     private double maxClip, minClip;
     private double rotatePower = 0;
     private int spoolPosition = 0;
-    private double grabPosition = 1;
+    private double grabPosition = 0;
     private int elementState = 0;
-    private int slowMode = 3;
+    private int platState = 0;
+    private int slowMode = 0;
+    private double feedPower = 0;
     private double precisionRatio = 0;
+    private int manualOverride = 0;
 
 
     /*
@@ -99,19 +104,19 @@ public class TeleOp2019 extends OpMode {
 
         grabServo = hardwareMap.get(Servo.class, "grab_servo");
         rotateServo = hardwareMap.get(Servo.class, "rotate_servo");
+
+        leftPlat = hardwareMap.get(Servo.class, "left_plat");
+        rightPlat = hardwareMap.get(Servo.class, "right_plat");
         
         elementServo = hardwareMap.get(Servo.class, "element_servo");
 
 
-
-
-
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
         
         spinLeft.setDirection(DcMotor.Direction.FORWARD);
         spinRight.setDirection(DcMotor.Direction.FORWARD);
@@ -126,6 +131,10 @@ public class TeleOp2019 extends OpMode {
         
         rotateServo.setPosition(rotatePower);
         elementServo.setPosition(0.25);
+        grabServo.setPosition(1);
+
+        leftPlat.setPosition(0);
+        rightPlat.setPosition(1);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -157,85 +166,96 @@ public class TeleOp2019 extends OpMode {
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        if(gamepad1.y){
-            while(gamepad1.y){
-            }
-            slowMode += 2;
-        }
-        
-        precisionRatio = (slowMode % 3) + 1;
-        
-        double lsx = gamepad1.left_stick_x;
-        double lsy = gamepad1.left_stick_y;
-        double rsx = gamepad1.right_stick_x;
-        double rsy = gamepad1.right_stick_y;
-        
-        double feedPower = -gamepad1.left_trigger + gamepad1.right_trigger;
-
-        if(lsx > 0.8 || lsx < -0.8){
-          minClip = -0.605;
-          maxClip = 0.605;
-        }else{
-          minClip = -1;
-          maxClip = 1;
-        }
-        
-        leftRear.setPower(Range.clip(lsy + lsx - rsx, minClip, maxClip)/precisionRatio);
-        leftFront.setPower(Range.clip(lsy - lsx - rsx, minClip, maxClip)/precisionRatio);
-        rightRear.setPower(Range.clip(lsy - lsx + rsx, -1, 1)/precisionRatio);
-        rightFront.setPower(Range.clip(lsy + lsx + rsx, minClip, maxClip)/precisionRatio);
-
-        spinLeft.setPower(feedPower/precisionRatio);
-        spinRight.setPower(-feedPower/precisionRatio);
-        
-        spoolPosition += ((gamepad2.right_trigger - gamepad2.left_trigger)*25)/precisionRatio;
-        
-        if(spoolPosition < 0){
-            spoolPosition = 0;
-        }else if(spoolPosition > 8900){
-            spoolPosition = 8900;
-        }
-        
-        spool.setTargetPosition(spoolPosition);
-        spool.setPower(1);
-        //spool.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
-        
-        
-        if (gamepad2.right_bumper){
-            while(gamepad2.right_bumper){
-            }
-            grabPosition++;
-        }
-        switch(grabPosition % 2){
-            case 1:
-                grabServo.setPosition(1);
-            case 0:
-                grabServo.setPosition(0.583);
-        }
-        
-        grabServo.setPosition(grabPosition);
-        
-        horizontalSlide.setPower((gamepad2.left_stick_y));
-        
-        rotateServo.setPosition(rotatePower);
         if(gamepad2.a){
             while(gamepad2.a){
             }
             rotatePower++;
         }
-        
-        switch(rotatePower % 2){
-            case 0:
-                rotateServo.setPosition(1);
-            case 1:
-                rotateServo.setPosition(0.001);
+
+        if(gamepad1.b){
+            while(gamepad1.b){                
+            }
+            platState++;
         }
-        
+
         if(gamepad2.b){
             while(gamepad2.b){
             }
             elementState++;
+        }
+
+        if (gamepad2.right_bumper){
+            while(gamepad2.right_bumper){
+            }
+            grabPosition++;
+        }
+        if(gamepad1.y){
+            while(gamepad1.y){
+            }
+            slowMode += 1;
+        }
+        if(gamepad2.x){
+            while(gamepad2.x){
+            }
+            manualOverride++;
+        }
+        precisionRatio = (slowMode % 2) + 1;
+        
+        double lsx = -gamepad1.left_stick_x;
+        double lsy = -gamepad1.left_stick_y;
+        double rsx = gamepad1.right_stick_x;
+        double rsy = gamepad1.right_stick_y;
+
+        if(lsx < -0.75){
+          minClip = -0.455;
+          maxClip = 0.605;
+        }else if(lsx > 0.75){
+            minClip = -0.605;
+            maxClip = 0.605;
+        }else{
+          minClip = -1;
+          maxClip = 1;
+        }
+        
+        spinLeft.setPower(feedPower/precisionRatio);
+        spinRight.setPower(-feedPower/precisionRatio);
+        
+        spoolPosition += ((gamepad2.right_trigger - gamepad2.left_trigger)*35);
+        
+        if(manualOverride % 2 == 0){
+            if(spoolPosition < 0){
+                spoolPosition = 0;
+            }else if(spoolPosition > 8900){
+                spoolPosition = 8900;
+            }
+        }
+        
+        spool.setTargetPosition(spoolPosition);
+        spool.setPower(1);
+        
+        feedPower = -gamepad1.left_trigger + gamepad1.right_trigger;
+
+        //leftRear.setPower(Range.clip(lsy - lsx - rsx, minClip, maxClip)/precisionRatio);
+        //leftFront.setPower(Range.clip(lsy + lsx - rsx, minClip, maxClip)/precisionRatio);
+        //rightRear.setPower(Range.clip(lsy - lsx + rsx, -1, 1)/precisionRatio);
+        //rightFront.setPower(Range.clip(lsy + lsx + rsx, minClip, maxClip)/precisionRatio);
+        
+        leftRear.setPower(Range.clip(lsy - rsx - lsx, minClip, maxClip)/precisionRatio);
+        leftFront.setPower(Range.clip(lsy + rsx - lsx,  minClip, maxClip)/precisionRatio);
+        rightRear.setPower(Range.clip(lsy + rsx + lsx, -1, 1)/precisionRatio);
+        rightFront.setPower(Range.clip(lsy - rsx + lsx, minClip, maxClip)/precisionRatio);
+
+        //leftRear.setPower(Range.clip(lsy - lsx - rsx, -1, 1)/precisionRatio);
+        //leftFront.setPower(Range.clip(lsy + lsx - rsx, -1, 1)/precisionRatio);
+        //rightRear.setPower(Range.clip(lsy - lsx + rsx, -1, 1)/precisionRatio);
+        //rightFront.setPower(Range.clip(lsy + lsx + rsx, -1, 1)/precisionRatio);
+        
+        //spool.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
+        
+        if(grabPosition % 2 == 1){
+            grabServo.setPosition(0.583);
+        }else{
+            grabServo.setPosition(1);
         }
         
         if(elementState % 2 == 1){
@@ -244,6 +264,22 @@ public class TeleOp2019 extends OpMode {
             elementServo.setPosition(0.25);
         }
         
+        if(rotatePower % 2 == 1){
+            rotateServo.setPosition(1);
+        }else{
+            rotateServo.setPosition(0.001);
+        }
+        
+        if(platState % 2 == 1){
+            leftPlat.setPosition(1);
+            rightPlat.setPosition(0);
+        }else{
+            leftPlat.setPosition(0);
+            rightPlat.setPosition(1);
+        }
+        
+        horizontalSlide.setPower((gamepad2.left_stick_y));
+
         /*
         * Code so that left stick goes forward backward and strafes
         * Right stick used to rotate
