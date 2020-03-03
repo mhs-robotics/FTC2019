@@ -84,10 +84,10 @@ public class OnlyParking extends LinearOpMode
         
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
+         leftRear.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
 
 
         // Tell the driver that initialization is complete.
