@@ -158,7 +158,6 @@ public class MechBotAutoDemo extends LinearOpMode {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double total = leftRear.getCurrentPosition()+inches;
-        double start = leftRear.getCurrentPosition();
 
         while(leftRear.getCurrentPosition() < total){
             leftRear.setPower(speed);
@@ -184,7 +183,6 @@ public class MechBotAutoDemo extends LinearOpMode {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double total=leftRear.getCurrentPosition()+inches;
-        double start=leftRear.getCurrentPosition();
 
         while(leftRear.getCurrentPosition()<total){
             leftRear.setPower(-speed);
@@ -202,13 +200,34 @@ public class MechBotAutoDemo extends LinearOpMode {
     }
 
 
+    void leftStrafe(float speed,float degrees){
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       
+        double total = leftRear.getCurrentPosition() + degrees;
+
+        while(leftRear.getCurrentPosition()<total){
+            leftRear.setPower(speed);
+            leftFront.setPower(speed);
+            rightRear.setPower(speed);
+            rightFront.setPower(speed);
+
+            telemetry.update(); 
+        }
+       
+        leftRear.setPower(0);
+        leftFront.setPower(0);
+        rightRear.setPower(0);
+        rightFront.setPower(0);
+    }
+
+    
     void rightStrafe(float speed, float degrees){
 
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
        
         double total=leftRear.getCurrentPosition()+degrees;
-        double start=leftRear.getCurrentPosition();
 
         while(leftRear.getCurrentPosition() < total){
             leftRear.setPower(-speed);
@@ -233,7 +252,6 @@ public class MechBotAutoDemo extends LinearOpMode {
 
         //declare variables for total target position and start position
         double total = leftRear.getCurrentPosition() - inches;
-        double start = leftRear.getCurrentPosition();
 
         //this whileloop runs while the robot has not gone farther past the total
         while(leftRear.getCurrentPosition()>total){
@@ -259,7 +277,6 @@ public class MechBotAutoDemo extends LinearOpMode {
        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
        double total=leftRear.getCurrentPosition()+inches;
-       double start=leftRear.getCurrentPosition();
 
        while(leftRear.getCurrentPosition()<total){
             leftRear.setPower(speed);
@@ -275,26 +292,4 @@ public class MechBotAutoDemo extends LinearOpMode {
         rightRear.setPower(0);
         rightFront.setPower(0);
    }
-
-    void leftStrafe(float speed,float degrees){
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       
-        double total = leftRear.getCurrentPosition() + degrees;
-        double start = leftRear.getCurrentPosition();
-
-        while(leftRear.getCurrentPosition()<total){
-            leftRear.setPower(speed);
-            leftFront.setPower(speed);
-            rightRear.setPower(speed);
-            rightFront.setPower(speed);
-
-            telemetry.update(); 
-        }
-       
-        leftRear.setPower(0);
-        leftFront.setPower(0);
-        rightRear.setPower(0);
-        rightFront.setPower(0);
-    }
 }
